@@ -1,0 +1,154 @@
+---
+title: "STAT2170_Assignment 1_45941866"
+author: "Olivia Paleologos"
+date: "16/05/2021"
+output:
+  pdf_document: default
+  word_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+surg <- read.csv("~/Desktop/Assignment datasets-20210516/surg.dat", sep="")
+```
+# Question 1
+
+A medical research team wants to investigate the survival time of patients that have a particular type of liver operation as part of their treatment. For each patient in the study, the following variables were recorded.
+
+# a. Produce a scatterplot of the data and comment on the features of the data and possible relationships between the response and predictors and relationships between the predictors themselves.
+
+The scatterplot that is shown below, is describing a negative linear regression. Showcasing 3 outliers that is above 5. The cluster is shown declining on the x value and increasing on the y value which determines it a negative scatterplot. This is also showing the relationship of the predictors which is highlighting that maybe H1 is accepted and H0 is rejected.
+
+```{r chunk1}
+x <- mtcars$wt
+y <- mtcars$mpg
+plot(x, y, main = "surge")
+```
+
+# b.Compute the correlation matrix of the dataset and comment.
+
+```{r chunk2}
+head(surg)
+surg.1 = lm(liver ~ prognosis + enzyme + age + survival, data = surg)
+summary(surg.1)
+```
+
+Through the table above, it can be seen that b5 is the most significant, this is shown by looking at the p-value 0.000748 *** is is <0.05.
+
+# c.Fit a model using all the predictors to explain the survival response. 
+
+
+• Write down the Hypotheses for the Overall ANOVA test of multiple regression.
+
+H0: no relationship between the response and predictors and relationships between the predictors themselves.
+
+H1: there is a relationship between the response and predictors and relationships between the predictors themselves.
+
+```{r chunk3}
+mod = lm(survival ~ age + enzyme + prognosis, data = surg)
+anova(mod)
+```
+
+• Produce an ANOVA table for the overall multiple regression model (One combined regression SS source is sufficient).
+
+Now, this anova table is showing the significant variables of enzyme and prognosis. 
+Due to the change of the p-values it is showing how these variables considered have evidence of importance with the relation of survival.
+
+```{r chunk3.1}
+qf(.95, df1 = 1, df2 = 50)
+```
+• Compute the F statistic for this test. 
+
+As F-test is one-tailed we only care about a larger variance and in this case the F-stat is 4.03431 which is considered large. 
+
+
+• Compute the P-Value
+
+The P-value which is shown as 1.048e-06 in the multiple regression table.
+
+• State your conclusion (both statistical conclusion and contextual conclusion).
+
+My conclusion is that due to the p-value being significant, it is showcasing that we reject H0 and accept H1.
+
+
+# d.Using model selection procedures discussed in the course, find the best multiple regression model that explains the data.
+
+```{r chunk4}
+surg.3 = lm(survival ~ prognosis + enzyme, data = surg)
+summary(surg.3)
+```
+The multiple regression table above is indicating that survival and its relation to prognosis and enzyme has shown that it is significant though looking at their p-values.
+
+I have cut age and liver out of the data due to their non-significant values.
+And as doing so, it has picked up that prognosis and enzyme is very significant.
+
+
+# e.Validate your final model and comment why it is not appropriate to use the multiple regression model to explain the survival time.
+
+```{r chunk5}
+par(mfrow = c(1,2))
+plot(surg.3, which = 1:2)
+plot(resid(surg.3) ~ survival + prognosis + enzyme, data = surg)
+```
+The Normal Q-Q plot is highlighting a negative linear regression and indicating 3 outliers. The Residuals vs Fitted plot is indicating a bell curve in the linear regression with one outlier.
+
+# f.Re-fit the model using log(survival) as the new response variable. In your answer,
+
+Use the model selection procedure discussed in the course starting with log(survival) as the response and start with all the predictors.
+
+```{r chunk6}
+surg.3 = lm(survival ~ prognosis + enzyme, data = surg)
+summary(surg.3)$coef
+```
+
+# g.Validate your final model with the log(survival) response. In particular, in your answer,
+
+Explain why the regression model with log(survival) response variable is superior to the model with the survival response variable
+
+# Question 2
+
+A car manufacturer wants to study the fuel efficiency of a new car engine. It wishes to account for any differences between the driver and production variation. The manufacturer randomly selects 5 cars from the production line and recruits 4 different test drivers.
+
+# a. For this study, is the design balanced or unbalanced? Explain why.
+
+In ANOVA and Design of Experiments, a balanced design has an equal number of observations for all possible level combinations. This is compared to an unbalanced design, which has an unequal number of observations. 
+
+```{r chunk7}
+kml <- read.csv("~/Desktop/Assignment datasets-20210516/kml.dat", sep="")
+```
+
+# b. Construct two different preliminary graphs that investigate different features of the data and comment.
+
+```{r chunk8}
+summary(kml)
+par(mfrow = c(1, 2))
+plot(kml)
+```
+
+This first plot is showing the relationship between kmL to driver and car, driver to car and kmL and car to driver and kmL. 
+
+```{r plot2}
+x <- mtcars$wt
+y <- mtcars$mpg
+plot(x, y, main = "kml")
+```
+
+This scatterplot is highlighting a positive linear regression with three outliers. These outliers would suggest that it is an unbalanced data experiment. 
+
+
+# c. Analyse the data, stating null and alternative hypothesis for each test, and check assumptions.
+
+Null hypothesis: No difference between the driver and the production variation
+Hypothesis 2: There is a difference between the driver and the production variation
+
+To check assumptions a regression model will be implemented.
+
+```{r chunk9}
+mod.1 = lm(kmL~ driver + car, data = kml)
+anova(mod.1)
+```
+
+# d. State your conclusions about the effect of driver and car on the efficiency kmL. 
+
+Through running an anova multiple regression model it is showing how from the efficiency kmL to the effect of driver and car the p-values of driver and car are showing to be significant as they are both <0.05. This is indicating that we reject the null hypothesis and accept the new hypothesis.
+
